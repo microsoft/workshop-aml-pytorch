@@ -20,33 +20,20 @@ import matplotlib.pyplot as plt
 import time
 import os
 import copy
+import math
 ```
 
 
-## Cats vs. Dogs Dataset
+## Lego Characters Dataset
 
-In this lab, we will create a classification model for cats and dogs. For this reason, we will use [Kaggle Cats vs. Dogs Dataset](https://www.kaggle.com/c/dogs-vs-cats), which can also be downloaded [from Microsoft](https://www.microsoft.com/en-us/download/details.aspx?id=54765).
-
-Let's download this dataset and extract it into `data` directory (this process may take some time!):
-
+- Download the dataset
 ```
-if not os.path.exists('data/kagglecatsanddogs_5340.zip'):
-    !wget -P data https://download.microsoft.com/download/3/E/1/3E1C3F21-ECDB-4869-8368-6DEBA77B919F/kagglecatsanddogs_5340.zip
-```
+if not os.path.exists('data/dataset-lego-characters'):
+    os.mkdir('data/dataset-lego-characters')
 
-- Unzip the dataset
-```
-import zipfile
-if not os.path.exists('data/PetImages'):
-    with zipfile.ZipFile('data/kagglecatsanddogs_5340.zip', 'r') as zip_ref:
-        zip_ref.extractall('data')
+!git clone https://github.com/hnky/dataset-lego-characters.git data/dataset-lego-characters
 ```
 
-- Remove the corrupt images
-```
-!rm data/PetImages/Cat/666.jpg
-!rm data/PetImages/Dog/11702.jpg
-```
 
 - Load and transform the data
 ```
@@ -57,8 +44,10 @@ trans = transforms.Compose([
         transforms.CenterCrop(224),
         transforms.ToTensor(), 
         std_normalize])
-dataset = torchvision.datasets.ImageFolder('data/PetImages',transform=trans)
-trainset, testset = torch.utils.data.random_split(dataset,[20000,len(dataset)-20000])
+dataset = torchvision.datasets.ImageFolder('./data/dataset-lego-characters/dataset',transform=trans)
+
+dataset_split_size = math.ceil(len(dataset)*0.8)
+trainset, testset = torch.utils.data.random_split(dataset,[dataset_split_size,len(dataset)-dataset_split_size])
 
 # Getting the classnames
 class_names = dataset.classes
@@ -77,6 +66,7 @@ dataset_sizes['val'] = len(testset)
 - Show some examples
 ```
 # Display the dataset
+# Display the dataset
 def display_dataset(dataset, n=10,classes=None):
     fig,ax = plt.subplots(1,n,figsize=(15,3))
     mn = min([dataset[i][0].min() for i in range(n)])
@@ -87,7 +77,7 @@ def display_dataset(dataset, n=10,classes=None):
         if classes:
             ax[i].set_title(classes[dataset[i][1]])
 
-display_dataset(dataset)
+display_dataset(testset)
 ```
 
 - Create the training loop
@@ -179,8 +169,8 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
 - Train it
 ```
-model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler, num_epochs=1)
-# 17 minuten
+model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler, num_epochs=2)
+# about 5 minutes
 ```
 
 
@@ -236,7 +226,7 @@ import datetime
 from PIL import Image
 
 ## Url to image to predict
-url = "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
+url = "https://raw.githubusercontent.com/hnky/dataset-lego-characters/main/test-images/Krusty.jpg"
 
 ## Download the remote image and         
 response = requests.get(url)

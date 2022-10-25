@@ -69,6 +69,24 @@ deployment  = ManagedOnlineDeployment(
 ml_client.online_deployments.begin_create_or_update(deployment)
 ```
 
+### Update the traffic
+```
+endpoint.traffic = {"version-1": 100}
+ml_client.begin_create_or_update(endpoint)
+```
+
 ### Test the deployment
 ```
+ml_client.online_endpoints.invoke(
+    endpoint_name=online_endpoint_name,
+    deployment_name="version-1",
+    request_file="./src/sample-request.json",
+)
 ```
+
+### Get the enpoints details
+
+
+
+### More resources:
+- [Microsoft Docs](https://learn.microsoft.com/azure/machine-learning/how-to-safely-rollout-managed-endpoints-sdk-v2)
