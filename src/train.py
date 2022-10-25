@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 import os
 import argparse
 import mlflow
@@ -149,7 +146,7 @@ if __name__ == "__main__":
 
     # Save the model
     print("saving model")
-    torch.save(model_ft, os.path.join(args.model_output_path,'cats-and-docs.pth'))
+    torch.save(model_ft, os.path.join(args.model_output_path,'model.pth'))
 
     # Save the labels
     with open(os.path.join(args.model_output_path,'labels.txt'), 'w') as f:
