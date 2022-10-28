@@ -76,7 +76,12 @@ print('Max intensity value: ',data_train[0][0].max().item())
 ```
 
 ## Train the network
-
+```
+net = nn.Sequential(
+        nn.Flatten(), 
+        nn.Linear(784,10), # 784 inputs, 10 outputs
+        nn.LogSoftmax())
+```
 ```
 print('Digit to be predicted: ',data_train[0][1])
 torch.exp(net(data_train[0][0]))
