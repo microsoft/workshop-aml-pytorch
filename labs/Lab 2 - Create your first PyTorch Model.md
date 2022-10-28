@@ -217,19 +217,11 @@ for i,x in enumerate(weight_tensor):
     ax[i].imshow(x.view(28,28).detach())
 ```
 
-
 ### Save the model
 ```
 !mkdir mnist-model
 torch.save(net.state_dict(), "mnist_cnn.pt")
 ```
-
-## TODO:  inference
-
-```
-
-```
-
 
 ## Learning resources 
 [Intro computer vision PyTorch](https://docs.microsoft.com/learn/modules/intro-computer-vision-pytorch/)
