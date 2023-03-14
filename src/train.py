@@ -10,6 +10,7 @@ import torch.backends.cudnn as cudnn
 import numpy as np
 import torchvision
 from torchvision import datasets, models, transforms
+from torchvision.models import ResNet50_Weights, ResNet18_Weights
 import matplotlib.pyplot as plt
 import time
 import os

@@ -225,3 +225,8 @@ torch.save(net.state_dict(), "mnist_cnn.pt")
 
 ## Learning resources 
 [Intro computer vision PyTorch](https://docs.microsoft.com/learn/modules/intro-computer-vision-pytorch/)
+
+
+ ( --- )
+
+ [Continue to Lab 3 - Pre-trained models and transfer learning](./Lab%203%20-%20Pre-trained%20models%20and%20transfer%20learning.md)

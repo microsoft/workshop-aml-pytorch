@@ -44,18 +44,18 @@ print("Connected to: "+ workspace)
 ```
 
 #### Create a compute resource for training
-An AzureML compute cluster is a fully managed compute resource that can be used to run the training job. In the following examples, a compute cluster named gpu-compute is created.
+An AzureML compute cluster is a fully managed compute resource that can be used to run the training job. In the following examples, a compute cluster named gpu-cluster is created.
 
 ```
 from azure.ai.ml.entities import AmlCompute
 
 # specify aml compute name.
-cpu_compute_target = "cpu-cluster"
+cpu_compute_target = "gpu-cluster"
 
 try:
-    ml_client.compute.get(cpu_compute_target)
+    ml_client.compute.get(gpu)
 except Exception:
-    print("Creating a new cpu compute target...")
+    print("Creating a new gpu compute target...")
     compute = AmlCompute(
         name=cpu_compute_target, size="Standard_NC6", min_instances=0, max_instances=1
     )
@@ -67,7 +67,7 @@ except Exception:
 # target name of compute where job will be executed
 computeName="gpu-cluster"
 job = command(
-    code="./src",
+    code="./src2",
     command="python hello.py",
     environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
     compute=computeName,
@@ -82,7 +82,7 @@ print("The outputs of the job:")
 ml_client.jobs.stream(returned_job.name)
 ```
 
-If the job is completed you should see "Hello World" in the outputs from the job.
+If the job is completed you should see "Hello World" in the outputs from the job. If it does not appear in the output, follow the link displayed in the output. Go to the tab: "Outputs + Logs" open de folder "user_logs" and select the file: "std_log.txt".
 
 
 ## 4.2 Move the data to the cloud
@@ -111,7 +111,14 @@ ml_client.data.create_or_update(my_data)
 
 ## 4.2 Create the training job
 
-Copy: scr/train.py
+We start with downloading the training file from the repository. In this file is all the code from Lab 3.
+
+``` 
+!mkdir src
+!wget https://raw.githubusercontent.com/microsoft/workshop-aml-pytorch/main/src/train.py -P src
+``` 
+
+Now lets create the training job on our compute cluster using the dataset.
 
 ``` 
 from azure.ai.ml import MLClient, command, Input, Output
@@ -122,21 +129,25 @@ from azure.ai.ml.constants import AssetTypes
 from azureml.core import Workspace
 
 # the key here should match the key passed to the command
-my_job_inputs = {
-    "data_path": Input(type=AssetTypes.URI_FOLDER, path="azureml:Lego-Characters:1")
+job_inputs = {
+    "data_path": Input(type=AssetTypes.URI_FOLDER, path="azureml:Lego-Characters:1"),
+    "num_epochs": 4
+}
+
+job_outputs = {
+    "model":Output(type=AssetTypes.CUSTOM_MODEL)
 }
 
 # target name of compute where job will be executed
-computeName="gpu-cluster"
+computeName = "gpu-cluster"
+
 job = command(
-    code="./src",
-    # the parameter will match the training script argument name
-    # inputs.data_path key should match the dictionary key
-    command="python train.py --data_path ${{inputs.data_path}} --num_epochs 4 --model_output_path ${{outputs.model}}",
-    inputs=my_job_inputs,
-    outputs=dict(model=Output(type=AssetTypes.CUSTOM_MODEL)),
-    environment="AzureML-pytorch-1.10-ubuntu18.04-py38-cuda11-gpu@latest",
-    compute=computeName,
+    inputs = job_inputs,
+    outputs = job_outputs,
+    code = "./src",
+    command = "python train.py --data_path ${{inputs.data_path}} --num_epochs ${{inputs.num_epochs}} --model_output_path ${{outputs.model}}",
+    environment = "AzureML-pytorch-1.10-ubuntu18.04-py38-cuda11-gpu@latest",
+    compute = computeName,
     display_name="Lego Characters Model Traning",
 )
 
@@ -147,8 +158,9 @@ print("Monitor your job at", aml_url)
 ml_client.jobs.stream(returned_job.name)
 ```
 
-## Register the model
 
+## Register the model
+Now that the training job is done, we can register the model in Model Management. When the model is in Model Management we can use it in deployments.
 
 ```
 model_path = f"azureml://jobs/{returned_job.name}/outputs/model"
@@ -160,3 +172,9 @@ registered_model = ml_client.models.create_or_update(model)
 
 print("Model version: "+registered_model.version)
 ```
+
+Let's move on to the next lab and deploy the model in an endpoint so we can use it in a solution.
+
+( --- )
+
+[Continue with: Lab 5 - Deploy your model](./Lab%205%20-%20Deploy%20your%20model.md)

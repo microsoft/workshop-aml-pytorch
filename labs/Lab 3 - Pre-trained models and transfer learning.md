@@ -12,6 +12,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
+from torchvision.models import ResNet50_Weights, ResNet18_Weights
 import torch.backends.cudnn as cudnn
 import numpy as np
 import torchvision
@@ -54,8 +55,8 @@ class_names = dataset.classes
 
 # Load images
 dataloaders = {}
-dataloaders['train'] = torch.utils.data.DataLoader(trainset, batch_size=4, shuffle=True, num_workers=4)
-dataloaders['val'] = torch.utils.data.DataLoader(testset, batch_size=4, shuffle=True, num_workers=4)
+dataloaders['train'] = torch.utils.data.DataLoader(trainset, batch_size=4, shuffle=True, num_workers=2)
+dataloaders['val'] = torch.utils.data.DataLoader(testset, batch_size=4, shuffle=True, num_workers=2)
 
 # Dataset size
 dataset_sizes = {}
@@ -65,7 +66,6 @@ dataset_sizes['val'] = len(testset)
 
 - Show some examples
 ```
-# Display the dataset
 # Display the dataset
 def display_dataset(dataset, n=10,classes=None):
     fig,ax = plt.subplots(1,n,figsize=(15,3))
@@ -151,7 +151,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=1):
 ```
 
 ```
-model_ft = models.resnet18(pretrained=True)
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("Training on: ", device)
+
+model_ft = models.resnet18(weights=ResNet18_Weights.DEFAULT)
 num_ftrs = model_ft.fc.in_features
 
 model_ft.fc = nn.Linear(num_ftrs, len(class_names))
@@ -262,3 +265,7 @@ predictions[class_names[index]] = str(round(probability*100,2))
 # Show the prediction
 print(predictions)
 ```
+
+( --- )
+
+[Continue with: Lab 4 - Training in the cloud](./Lab%204%20-%20Training%20in%20the%20cloud.md)

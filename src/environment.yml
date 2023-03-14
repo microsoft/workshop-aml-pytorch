@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - pip:
+      - azureml-defaults
+      - torch
+      - torchvision
+      - pillow
+name: azureml_ecb3693c22872ba2e917032756afa62d
