@@ -1,4 +1,4 @@
-# GitHub Action to post GitHub metrics to a Azure Function App webhook
+# GitHub Action to post GitHub metrics to an Azure Function App webhook
 # Required secrets
 #   1. A PAT with repo rights:    PAT_REPO_REPORT
 #   2. The webhook endpoint url:  REPORTING_ENDPOINT_URL
@@ -18,7 +18,7 @@ jobs:
   report_metrics_job:
     runs-on: ubuntu-latest
     name: GitHub repo metrics report
-    steps:       
+    steps:
       - name: run github metrics image
         id: github_metrics
         uses: gloveboxes/GitHubMetricsAction@v1
