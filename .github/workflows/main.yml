@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: run github metrics image
         id: github_metrics
-        uses: gloveboxes/GitHubMetricsAction@v1
+        uses: gloveboxes/GitHubMetricsAction@latest
         with:
           github_repo: ${{ github.repository }}
           github_personal_access_token: ${{ secrets.REPORTING_PAT }}
